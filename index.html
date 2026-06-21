@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Peds Dose</title>
+<style>
+  :root { --bg:#0f1419; --card:#1a222c; --line:#2c3744; --txt:#e6edf3; --mut:#8b98a5; --accent:#3fb950; --warn:#d29922; --danger:#f85149; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,system-ui,sans-serif; background:var(--bg); color:var(--txt); -webkit-text-size-adjust:100%; }
+  .wrap { max-width:540px; margin:0 auto; padding:12px 14px 60px; }
+  h1 { font-size:18px; margin:4px 0 10px; }
+  .banner { background:#3a2a08; border:1px solid var(--warn); color:#f0c674; padding:8px 10px; border-radius:8px; font-size:12px; margin-bottom:12px; }
+  .patient { position:sticky; top:0; background:var(--bg); padding:8px 0 10px; z-index:5; border-bottom:1px solid var(--line); }
+  .row { display:flex; gap:10px; }
+  .field { flex:1; }
+  label { display:block; font-size:12px; color:var(--mut); margin-bottom:3px; }
+  input, select { width:100%; padding:11px 10px; font-size:17px; background:var(--card); color:var(--txt); border:1px solid var(--line); border-radius:8px; }
+  .drugbtns { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  .drugbtn { padding:8px 13px; font-size:14px; background:var(--card); color:var(--txt); border:1px solid var(--line); border-radius:20px; cursor:pointer; }
+  .drugbtn.active { border-color:var(--accent); color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .card h2 { margin:0 0 2px; font-size:20px; }
+  .unverified { display:inline-block; font-size:11px; color:var(--danger); border:1px solid var(--danger); border-radius:4px; padding:1px 5px; margin-left:6px; vertical-align:middle; }
+  .big { font-size:30px; font-weight:700; margin:8px 0 2px; }
+  .big .unit { font-size:16px; color:var(--mut); font-weight:400; }
+  .sub { font-size:13px; color:var(--mut); }
+  .grid { display:flex; gap:14px; margin-top:10px; }
+  .grid > div { flex:1; }
+  .flag { margin-top:10px; padding:7px 9px; border-radius:7px; font-size:13px; }
+  .flag.cap  { background:#3a2a08; color:#f0c674;  border:1px solid var(--warn); }
+  .flag.over { background:#3a0d0d; color:#ffb3ad;  border:1px solid var(--danger); }
+  .flag.warn { background:#1c2530; color:var(--mut); border:1px solid var(--line); }
+  .hint { color:var(--mut); font-size:13px; }
+  .src { font-size:11px; color:var(--mut); margin-top:12px; }
+  /* age table */
+  .agetable { width:100%; border-collapse:collapse; margin-top:10px; }
+  .agetable th { text-align:left; color:var(--mut); font-size:12px; padding:4px 6px; border-bottom:1px solid var(--line); }
+  .agetable td { padding:9px 6px; font-size:15px; border-bottom:1px solid var(--line); }
+  .agetable tr:last-child td { border-bottom:none; }
+  .agetable .ml { font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pediatric Dose Calculator</h1>
+  <div class="banner">⚠ Reference aid only. All values are <b>UNVERIFIED</b> — confirm against Thai pediatric reference before clinical use. Suggests math only; never auto-administers.</div>
+
+  <div class="patient">
+    <div class="row">
+      <div class="field">
+        <label for="wt">Weight (kg) *</label>
+        <input id="wt" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 10" />
+      </div>
+      <div class="field">
+        <label for="age">Age (warnings)</label>
+        <input id="age" type="text" inputmode="numeric" placeholder="e.g. 2 yr" />
+      </div>
+    </div>
+  </div>
+
+  <div class="drugbtns" id="drugbtns"></div>
+  <div id="result"></div>
+</div>
+
+<script type="module">
+import { drugs } from "./drugs.js";
+import { computeDose, roundToHalf } from "./calc.js";
+
+const wtEl  = document.getElementById("wt");
+const btnWrap   = document.getElementById("drugbtns");
+const resultEl  = document.getElementById("result");
+
+let selectedDrug = null;
+let regimenIdx = 0;
+let concIdx = 0;
+
+drugs.forEach((d, i) => {
+  const b = document.createElement("button");
+  b.className = "drugbtn";
+  b.textContent = d.generic;
+  b.onclick = () => { selectedDrug = d; regimenIdx = 0; concIdx = 0; markActive(i); render(); };
+  btnWrap.appendChild(b);
+});
+function markActive(i) {
+  [...btnWrap.children].forEach((c, j) => c.classList.toggle("active", j === i));
+}
+
+const fmt = (n, dp = 0) => Number.isFinite(n) ? +n.toFixed(dp) + "" : "–";
+
+function render() {
+  if (!selectedDrug) { resultEl.innerHTML = '<p class="hint">Pick a drug above.</p>'; return; }
+  const d = selectedDrug;
+  const wt = parseFloat(wtEl.value);
+  const isAgeTable = d.calcMode === "ageTable";
+
+  let html = `<div class="card"><h2>${d.generic}${d.verified ? "" : '<span class="unverified">UNVERIFIED</span>'}</h2>`;
+
+  // regimen selector (weight-based only, when >1)
+  if (!isAgeTable) {
+    if (d.regimens.length > 1) {
+      html += `<label style="margin-top:8px">Indication</label><select id="regSel">` +
+        d.regimens.map((r, i) => `<option value="${i}" ${i === regimenIdx ? "selected" : ""}>${r.indication}</option>`).join("") +
+        `</select>`;
+    } else {
+      html += `<div class="sub">${d.regimens[0].indication}</div>`;
+    }
+  }
+
+  // concentration selector
+  if (d.concentrations.length > 1) {
+    html += `<label style="margin-top:8px">Concentration</label><select id="concSel">` +
+      d.concentrations.map((c, i) => `<option value="${i}" ${i === concIdx ? "selected" : ""}>${c.label}</option>`).join("") +
+      `</select>`;
+  } else if (d.concentrations.length === 1) {
+    html += `<div class="sub" style="margin-top:6px">${d.concentrations[0].label}</div>`;
+  }
+
+  const conc = d.concentrations[concIdx] ?? null;
+
+  if (isAgeTable) {
+    // age-based table (cetirizine etc)
+    const mgPerMl = conc ? conc.mgPer5ml / 5 : null;
+    html += `<table class="agetable">
+      <tr><th>Age</th><th>Dose</th><th>Volume</th></tr>
+      ${d.ageDoseTiers.map(t => {
+        const ml = mgPerMl ? roundToHalf(t.dose_mg / mgPerMl) : null;
+        return `<tr>
+          <td>${t.label}</td>
+          <td>${t.dose_mg} mg · OD</td>
+          <td class="ml">${ml != null ? ml + " mL" : "–"}</td>
+        </tr>`;
+      }).join("")}
+    </table>`;
+  } else if (!(wt > 0)) {
+    html += `<p class="hint" style="margin-top:12px">Enter weight to calculate.</p>`;
+  } else {
+    const regimen = d.regimens[regimenIdx];
+    const r = computeDose({ weightKg: wt, regimen, concentration: conc });
+    html += `
+      <div class="grid">
+        <div>
+          <div class="big">${fmt(r.mL_rounded, 1)} <span class="unit">mL</span></div>
+          <div class="sub">per dose · ${regimen.freqPerDay}×/day</div>
+          <div class="sub">raw ${fmt(r.mL_raw, 2)} mL</div>
+        </div>
+        <div>
+          <div class="big">${fmt(r.perDose_mg, 1)} <span class="unit">mg</span></div>
+          <div class="sub">per dose (${+regimen.mgPerKgPerDose.toFixed(2)} mg/kg)</div>
+          <div class="sub">${fmt(r.perDay_mg, 0)} mg/day</div>
+        </div>
+      </div>`;
+
+    if (r.perDoseCapped)
+      html += `<div class="flag cap">Per-dose capped → adult max ${regimen.maxPerDose} mg.</div>`;
+    if (r.dayCap_mg != null) {
+      const cls = r.perDayOverCap ? "over" : "warn";
+      const msg = r.perDayOverCap ? "OVER daily max ⚠" : "within daily max";
+      html += `<div class="flag ${cls}">Daily: ${fmt(r.perDay_mg, 0)} / ${fmt(r.dayCap_mg, 0)} mg — ${msg}.</div>`;
+    }
+  }
+
+  if (d.ageWarnings?.length)
+    html += `<div class="flag warn">${d.ageWarnings.join(" · ")}</div>`;
+
+  html += `<div class="src">Source: ${d.source}</div></div>`;
+  resultEl.innerHTML = html;
+
+  const rs = document.getElementById("regSel");
+  if (rs) rs.onchange = () => { regimenIdx = +rs.value; render(); };
+  const cs = document.getElementById("concSel");
+  if (cs) cs.onchange = () => { concIdx = +cs.value; render(); };
+}
+
+wtEl.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
