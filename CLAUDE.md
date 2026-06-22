@@ -10,6 +10,12 @@ A zero-dependency, single-page pediatric oral dose calculator used as a clinical
 - `calc.js` — pure dose-calculation logic (ES module, no DOM)
 - `index.html` — UI that imports both via `<script type="module">`
 
+## Live site
+
+Hosted on GitHub Pages: **https://pungpattarapong-design.github.io/peds-dose/**
+
+Deploys automatically from the `main` branch root whenever changes are pushed to `main`.
+
 ## Running and testing
 
 Open `index.html` directly in a browser — no server needed.
