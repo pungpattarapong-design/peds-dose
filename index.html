@@ -1,179 +1,573 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Peds Dose</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>👶🏻 er-ped-calc</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#664CF1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Sarabun:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0f1419; --card:#1a222c; --line:#2c3744; --txt:#e6edf3; --mut:#8b98a5; --accent:#3fb950; --warn:#d29922; --danger:#f85149; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family:-apple-system,system-ui,sans-serif; background:var(--bg); color:var(--txt); -webkit-text-size-adjust:100%; }
-  .wrap { max-width:540px; margin:0 auto; padding:12px 14px 60px; }
-  h1 { font-size:18px; margin:4px 0 10px; }
-  .banner { background:#3a2a08; border:1px solid var(--warn); color:#f0c674; padding:8px 10px; border-radius:8px; font-size:12px; margin-bottom:12px; }
-  .patient { position:sticky; top:0; background:var(--bg); padding:8px 0 10px; z-index:5; border-bottom:1px solid var(--line); }
-  .row { display:flex; gap:10px; }
-  .field { flex:1; }
-  label { display:block; font-size:12px; color:var(--mut); margin-bottom:3px; }
-  input, select { width:100%; padding:11px 10px; font-size:17px; background:var(--card); color:var(--txt); border:1px solid var(--line); border-radius:8px; }
-  .drugbtns { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
-  .drugbtn { padding:8px 13px; font-size:14px; background:var(--card); color:var(--txt); border:1px solid var(--line); border-radius:20px; cursor:pointer; }
-  .drugbtn.active { border-color:var(--accent); color:var(--accent); }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
-  .card h2 { margin:0 0 2px; font-size:20px; }
-  .unverified { display:inline-block; font-size:11px; color:var(--danger); border:1px solid var(--danger); border-radius:4px; padding:1px 5px; margin-left:6px; vertical-align:middle; }
-  .big { font-size:30px; font-weight:700; margin:8px 0 2px; }
-  .big .unit { font-size:16px; color:var(--mut); font-weight:400; }
-  .sub { font-size:13px; color:var(--mut); }
-  .grid { display:flex; gap:14px; margin-top:10px; }
-  .grid > div { flex:1; }
-  .flag { margin-top:10px; padding:7px 9px; border-radius:7px; font-size:13px; }
-  .flag.cap  { background:#3a2a08; color:#f0c674;  border:1px solid var(--warn); }
-  .flag.over { background:#3a0d0d; color:#ffb3ad;  border:1px solid var(--danger); }
-  .flag.warn { background:#1c2530; color:var(--mut); border:1px solid var(--line); }
-  .hint { color:var(--mut); font-size:13px; }
-  .src { font-size:11px; color:var(--mut); margin-top:12px; }
-  /* age table */
-  .agetable { width:100%; border-collapse:collapse; margin-top:10px; }
-  .agetable th { text-align:left; color:var(--mut); font-size:12px; padding:4px 6px; border-bottom:1px solid var(--line); }
-  .agetable td { padding:9px 6px; font-size:15px; border-bottom:1px solid var(--line); }
-  .agetable tr:last-child td { border-bottom:none; }
-  .agetable .ml { font-weight:700; }
+:root{--bg:#F8F8FA;--card:#FFFFFF;--ink:#111827;--muted:#6B7280;--muted-light:#9CA3AF;--primary:#664CF1;--primary-dark:#5139D9;--primary-deep:#3821B4;--primary-soft:#F2EFFE;--accent:#FF8000;--accent-soft:#FFF4E8;--field:#FFFFFF;--border:rgba(17,24,39,.07);--input-border:#E5E7EB;--primary-border:rgba(102,76,241,.2);--ring:0 0 0 3px rgba(102,76,241,.18);--shadow:0 8px 24px rgba(17,24,39,.08);--shadow-soft:0 4px 16px rgba(17,24,39,.055);--shadow-purple:0 10px 24px rgba(102,76,241,.22);--good:#12846A;--danger:#D1435B;--radius-xl:20px;--radius-lg:16px;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{min-height:100%;background:var(--bg);scroll-behavior:smooth;scroll-padding-top:112px;color-scheme:light}
+body{min-height:100vh;margin:0;padding:0;overflow-x:hidden;overscroll-behavior-y:none;color:var(--ink);background:radial-gradient(820px 420px at -4% -8%,rgba(102,76,241,.13),transparent 62%),radial-gradient(620px 360px at 104% 14%,rgba(255,128,0,.055),transparent 58%),linear-gradient(180deg,#fbfaff 0,#F8F8FA 280px);font-family:Inter,Sarabun,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body.drawer-open{overflow:hidden}
+::selection{color:#fff;background:var(--primary)}
+button,input,select{font:inherit}
+.broselow,.context-action,button{-webkit-tap-highlight-color:transparent}
+h1,h2,h3{margin:0 0 8px;letter-spacing:-.02em}
+.container{width:min(100%,1200px);margin:106px auto 100px;padding:20px}
+.skip-link{position:fixed;top:8px;left:12px;z-index:200;padding:9px 13px;border-radius:10px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));transform:translateY(-150%);transition:transform .18s ease}
+.skip-link:focus{transform:none}
+.topbar{position:fixed;inset:0 0 auto;z-index:60;border-bottom:1px solid rgba(17,24,39,.06);background:rgba(248,248,250,.86);box-shadow:0 2px 16px rgba(17,24,39,.045);backdrop-filter:blur(20px) saturate(1.4)}
+.topbar-inner{max-width:1160px;min-height:88px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 18px 10px;display:grid;grid-template-columns:218px minmax(0,1fr);align-items:center;gap:14px}
+.brand-lockup{min-width:0;display:flex;align-items:center;gap:11px;color:var(--ink)}
+.brand-mark{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.72);border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:var(--shadow-purple);font-size:22px}
+.brand-copy{min-width:0;display:flex;flex-direction:column;line-height:1.15}
+.brand-copy strong{font-size:17px;letter-spacing:-.01em;white-space:nowrap}
+.brand-copy small{margin-top:4px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.patient-context{min-width:0;display:grid;grid-template-columns:minmax(105px,.8fr) minmax(105px,.8fr) minmax(150px,1.1fr) minmax(105px,.75fr) minmax(180px,1.3fr);gap:8px}
+.context-action,.context-field,.context-metric,.context-switch{min-width:0;min-height:60px;margin:0;padding:8px 11px;color:var(--ink);background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-soft);transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s var(--ease)}
+.context-action:focus-visible,.context-field:focus-within,.context-switch:focus-within{border-color:rgba(102,76,241,.42);background:#fff;box-shadow:var(--ring),var(--shadow-soft)}
+.context-field{display:flex;flex-direction:column;justify-content:center;gap:3px}
+.context-label{display:block;color:var(--muted);font-size:9px;font-weight:800;line-height:1;letter-spacing:.11em;text-transform:uppercase}
+.context-label small{font-size:9px;font-weight:600;letter-spacing:0;text-transform:none}
+.context-input{display:flex;align-items:center;min-width:0;gap:4px}
+.topbar .context-field input{min-width:0;width:100%;min-height:28px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--primary-deep);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.topbar .context-field input:focus{border:0;box-shadow:none}
+.context-unit{color:var(--muted);font-size:11px;font-weight:700}
+.context-switch{display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.context-switch>span{min-width:0;display:flex;flex-direction:column;line-height:1.1}
+.context-switch strong{color:var(--ink);font-size:12px;white-space:nowrap}
+.context-switch small{margin-top:3px;color:var(--muted);font-size:9px;white-space:nowrap}
+.context-switch .switch{appearance:none;flex:0 0 40px;width:40px;height:23px;min-height:23px;padding:0;border:0;border-radius:999px;background:#D1D5DB;box-shadow:none;position:relative;outline:0;cursor:pointer}
+.context-switch .switch:checked{background:linear-gradient(135deg,var(--primary),var(--primary-dark))}
+.context-switch .switch:before{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .2s ease;box-shadow:0 1px 4px rgba(17,24,39,.24)}
+.context-switch .switch:checked:before{transform:translateX(17px)}
+.context-switch .switch:focus-visible{box-shadow:var(--ring)}
+.context-metric{display:flex;flex-direction:column;justify-content:center;background:linear-gradient(145deg,#fff,var(--primary-soft))}
+.context-metric strong{margin-top:4px;color:var(--primary-deep);font-size:17px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.context-metric small{min-height:10px;margin-top:3px;color:var(--muted);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.context-action{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;cursor:pointer}
+.context-action:hover{transform:translateY(-2px);border-color:var(--primary-border);box-shadow:var(--shadow)}
+.context-action:focus-visible{outline:0;box-shadow:var(--ring),var(--shadow)}
+.action-chevron{color:var(--primary);font-size:20px;line-height:1;transition:transform .2s ease}
+.context-action[aria-expanded=true] .action-chevron{transform:rotate(180deg)}
+.broselow{min-width:0;padding:5px 8px;border-radius:999px;border:1px solid var(--primary-border);color:var(--primary-deep);background:var(--primary-soft);font-size:12px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:none}
+.tabs{position:sticky;top:98px;z-index:50;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:16px;padding:5px;border:1px solid var(--border);border-radius:18px;background:rgba(238,237,244,.88);box-shadow:var(--shadow-soft);backdrop-filter:blur(18px) saturate(1.3)}
+.tab-btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 13px;border:0;border-radius:14px;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;font-size:13px;font-weight:700;transition:transform .18s var(--ease),color .18s ease,box-shadow .18s ease,background .18s ease}
+.tab-icon{font-size:17px;line-height:1;filter:grayscale(.25)}
+.tab-label-short{display:none}
+.tab-btn:hover{transform:translateY(-1px);color:var(--primary-deep);background:rgba(255,255,255,.7)}
+.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 7px 16px rgba(102,76,241,.24)}
+.tab-btn.active .tab-icon{filter:none}
+.tab-btn:focus-visible,button:focus-visible{outline:0;box-shadow:var(--ring)}
+.card{position:relative;overflow:hidden;padding:24px;border:1px solid var(--border);border-radius:var(--radius-xl);color:var(--ink);background:var(--card);box-shadow:var(--shadow)}
+.card::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--primary),#8B78FA 72%,var(--accent));opacity:.92}
+.card:not([hidden]){animation:panel-in .24s var(--ease)}
+@keyframes panel-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.section-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:0 0 20px;padding:0 0 16px;border-bottom:1px solid var(--border)}
+.section-header h2{margin:3px 0 3px;color:var(--ink);font-size:24px;line-height:1.2}
+.section-header p{margin:0;color:var(--muted);font-size:12px}
+.section-kicker{color:var(--primary);font-size:10px;font-weight:800;letter-spacing:.14em}
+.section-badge{flex:0 0 auto;padding:7px 11px;border:1px solid var(--primary-border);border-radius:999px;color:var(--primary-deep);background:var(--primary-soft);font-size:11px;font-weight:800;white-space:nowrap}
+.section-badge-teal{color:#A34E00;border-color:rgba(255,128,0,.22);background:var(--accent-soft)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.col-3{grid-column:span 3}
+.col-4{grid-column:span 4}
+.col-6{grid-column:span 6}
+.col-8{grid-column:span 8}
+.col-9{grid-column:span 9}
+.col-12{grid-column:span 12}
+label{display:inline-block;margin-bottom:7px;color:#4B5563;font-size:12px;font-weight:700;letter-spacing:.01em}
+.label-help{color:var(--muted-light);font-size:11px;font-weight:400;letter-spacing:0}
+input,select{width:100%;min-height:50px;padding:11px 13px;border:1px solid var(--input-border);border-radius:12px;outline:0;color:var(--ink);background:var(--field);box-shadow:0 1px 2px rgba(17,24,39,.025);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .18s ease}
+input:hover,select:hover{border-color:rgba(102,76,241,.4)}
+input:focus,select:focus{background:#fff;border-color:var(--primary);box-shadow:var(--ring)}
+input:user-invalid{border-color:rgba(209,67,91,.5)}
+input::placeholder{color:var(--muted-light);opacity:1}
+input:disabled{cursor:not-allowed;color:#9CA3AF;background:#F3F4F6}
+.btn{padding:10px 14px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:var(--shadow-purple);cursor:pointer}
+#dose .grid>.col-9,#dose .grid>.col-3,#dose .grid>.col-6{padding:14px;border:1px solid var(--border);border-radius:16px;background:#FAFAFC}
+#dose .grid>.col-9,#dose .grid>.col-3{background:linear-gradient(145deg,#FCFBFF,var(--primary-soft))}
+.summary{min-height:84px;padding:19px 20px;border:1px solid var(--primary-border);border-radius:var(--radius-lg);color:var(--ink);background:linear-gradient(145deg,#FBFAFF,#F4F1FF);box-shadow:inset 4px 0 0 var(--primary),0 6px 18px rgba(102,76,241,.07);white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.72}
+.summary strong{color:var(--primary-deep);font-weight:800}
+.summary:empty::before{content:"กรอกข้อมูลเพื่อเริ่มคำนวณ";color:var(--muted);font-size:13px}
+#doseOut{min-height:132px;padding:24px;border-color:rgba(102,76,241,.22);border-radius:18px;background:radial-gradient(420px 180px at 100% 0,rgba(255,128,0,.08),transparent 56%),linear-gradient(135deg,#F0ECFF,#FBFAFF 68%);box-shadow:inset 5px 0 0 var(--primary),0 10px 26px rgba(102,76,241,.1);font-size:15px;font-variant-numeric:tabular-nums}
+#doseOut:empty{display:flex;align-items:center}
+#doseOut:empty::before{font-weight:700}
+.muted,.status{color:var(--muted);font-size:13px}
+.note{margin-top:16px;padding:12px 14px 12px 38px;border:1px solid rgba(255,128,0,.2);border-radius:13px;background:var(--accent-soft);font-size:12px;line-height:1.55;color:#8A4705;position:relative}
+.note::before{content:"⚠️";position:absolute;left:12px;top:10px}
+.drug-essentials{margin-top:14px;border:1px solid var(--primary-border);border-radius:14px;background:rgba(255,255,255,.78);overflow:hidden;white-space:normal}
+.drug-essentials>summary{min-height:46px;padding:12px 14px;color:var(--primary-deep);font-size:13px;font-weight:800;cursor:pointer;list-style:none;touch-action:manipulation}
+.drug-essentials>summary::-webkit-details-marker{display:none}
+.drug-essentials>summary::after{content:"＋";float:right;color:var(--primary)}
+.drug-essentials[open]>summary{border-bottom:1px solid var(--primary-border);background:var(--primary-soft)}
+.drug-essentials[open]>summary::after{content:"−"}
+.drug-essentials-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px}
+.drug-essential-section{padding:11px;border:1px solid var(--border);border-radius:12px;background:#fff}
+.drug-essential-section strong{display:block;margin-bottom:5px;color:var(--primary-deep);font-size:12px}
+.drug-essential-section ul{margin:0;padding-left:18px;color:#374151;font-size:12px;line-height:1.55}
+.drug-essential-section li+li{margin-top:4px}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-right:4px;padding:8px 14px;border:1px solid var(--primary-border);border-radius:999px;background:#fff;color:var(--primary-deep);font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation;transition:transform .18s var(--ease),border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.pill:hover{transform:translateY(-1px);border-color:var(--primary);background:var(--primary-soft);box-shadow:0 5px 14px rgba(102,76,241,.1)}
+.pill:active{transform:scale(.97)}
+.pill.active{border-color:transparent;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 6px 14px rgba(102,76,241,.2)}
+.fluid-picker{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px;border:1px solid var(--border);border-radius:14px;background:#FAFAFC}
+.fluid-picker>.muted{margin-right:3px}
+.fluid-quick-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.fluid-quick-actions .pill{min-height:32px;margin:0;padding:5px 11px}
+.fluid-optional{grid-column:span 12;border:1px solid var(--border);border-radius:15px;background:#FAFAFC}
+.fluid-optional>summary{min-height:46px;padding:12px 14px;color:var(--primary-deep);font-size:13px;font-weight:700;cursor:pointer}
+.fluid-optional[open]>summary{border-bottom:1px solid var(--border)}
+.fluid-optional-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px}
+.fluid-plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:7px 0}
+.fluid-plan-card{padding:12px 13px;border:1px solid var(--border);border-radius:13px;background:#fff;box-shadow:0 3px 10px rgba(17,24,39,.04)}
+.fluid-plan-card strong{display:block;margin-bottom:4px;color:var(--primary-deep)}
+.fluid-alert{margin:7px 0;padding:9px 11px;border:1px solid rgba(209,67,91,.2);border-radius:11px;color:#8B1E35;background:#FFF1F4}
+.fluid-caution{margin:7px 0;padding:9px 11px;border:1px solid rgba(255,128,0,.22);border-radius:11px;color:#8A4705;background:var(--accent-soft)}
+.fluid-hard-warning{margin:9px 0;padding:11px 12px;border:2px solid rgba(209,67,91,.42);border-radius:12px;color:#8B1E35;background:linear-gradient(135deg,#FFE7EC,#FFF4F6);box-shadow:0 7px 18px rgba(209,67,91,.09)}
+.fluid-audit{grid-column:span 12;border:1px solid var(--primary-border);border-radius:15px;background:var(--primary-soft);overflow:hidden}
+.fluid-audit>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:12px 14px;color:var(--primary-deep);font-size:13px;font-weight:800;cursor:pointer}
+.fluid-audit>summary small{color:var(--muted);font-weight:500;text-align:right}
+.fluid-audit[open]>summary{border-bottom:1px solid var(--primary-border)}
+.fluid-audit-body{padding:13px 14px 15px}
+.fluid-audit-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.fluid-audit-copy{min-height:36px;padding:7px 12px;border:0;border-radius:10px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 6px 14px rgba(102,76,241,.18);cursor:pointer;font-weight:700}
+.fluid-audit-copy:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.fluid-audit-status{min-height:18px;color:var(--good);font-size:12px}
+.fluid-audit-pre{max-height:420px;overflow:auto;margin:0;padding:13px;border:1px solid var(--border);border-radius:12px;background:#fff;color:#374151;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text}
+.pals-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:0 0 18px;padding:0 0 16px;border-bottom:1px solid var(--border)}
+.pals-header h2{color:var(--ink);font-size:22px}
+.pals-header p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.pals-version{flex:0 0 auto;padding:6px 10px;border:1px solid rgba(255,128,0,.22);border-radius:999px;color:#A34E00;background:var(--accent-soft);font-size:11px;font-weight:800;white-space:nowrap}
+.pals-summary{padding:0;border:0;background:transparent;box-shadow:none;white-space:normal}
+.pals-summary:empty{min-height:72px;padding:17px 18px;border:1px solid var(--primary-border);border-radius:16px;background:linear-gradient(135deg,#F4F1FF,#FBFAFF);box-shadow:inset 4px 0 0 var(--primary)}
+.pals-patient{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:1px 0 12px;padding:10px 12px;border:1px solid var(--primary-border);border-radius:13px;background:var(--primary-soft);color:var(--primary-deep)}
+.pals-chip{display:inline-flex;align-items:center;min-height:27px;padding:4px 9px;border:1px solid var(--primary-border);border-radius:999px;background:#fff;font-size:11px;font-weight:700}
+.pals-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.pals-panel{overflow:hidden;border:1px solid var(--border);border-radius:15px;background:#fff;box-shadow:var(--shadow-soft);transition:border-color .18s ease,box-shadow .18s ease,transform .18s var(--ease)}
+.pals-panel:hover{transform:translateY(-1px);border-color:var(--primary-border);box-shadow:var(--shadow)}
+.pals-panel-wide{grid-column:1/-1}
+.pals-panel>summary{display:flex;align-items:center;gap:8px;min-height:48px;padding:11px 13px;color:var(--primary-deep);font-size:14px;font-weight:800;cursor:pointer;list-style:none;touch-action:manipulation}
+.pals-panel>summary::-webkit-details-marker{display:none}
+.pals-panel>summary::after{content:"＋";margin-left:auto;color:var(--primary);font-size:16px}
+.pals-panel[open]>summary::after{content:"−"}
+.pals-panel[open]>summary{border-bottom:1px solid var(--primary-border);background:var(--primary-soft)}
+.pals-panel-body{padding:12px 14px 14px;color:#374151;font-size:13px;line-height:1.62}
+.pals-panel-body p{margin:0 0 8px}
+.pals-panel-body p:last-child{margin-bottom:0}
+.pals-panel-body strong{color:var(--primary-deep)}
+.pals-critical{margin:8px 0;padding:9px 10px;border-left:4px solid var(--danger);border-radius:9px;background:#FFF1F4;color:#8B1E35}
+.pals-step{display:grid;grid-template-columns:24px minmax(0,1fr);gap:7px;align-items:start;margin:7px 0}
+.pals-step b{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));font-size:11px}
+.pals-safety{margin-top:11px;padding:11px 13px;border:1px solid rgba(209,67,91,.22);border-radius:12px;color:#8B1E35;background:#FFF1F4;font-size:12px}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:80}
+.fab button{min-height:48px;padding:12px 17px;border:1px solid rgba(255,255,255,.22);border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:var(--shadow-purple);cursor:pointer;font-weight:700;transition:transform .18s ease,box-shadow .18s ease}
+.fab button:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(102,76,241,.3)}
+.fab .secondary{background:linear-gradient(135deg,#FF941F,var(--accent));box-shadow:0 10px 22px rgba(255,128,0,.22)}
+.drawer-backdrop{position:fixed;inset:0;z-index:99;background:rgba(17,24,39,.38);backdrop-filter:blur(4px);animation:backdrop-in .18s ease both}
+.drawer{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:100;max-width:1056px;max-height:min(82vh,760px);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;margin:auto;padding:20px;border:1px solid rgba(255,255,255,.8);border-radius:24px;color:var(--ink);background:rgba(255,255,255,.985);box-shadow:0 28px 80px rgba(17,24,39,.26);backdrop-filter:blur(20px);animation:drawer-in .24s var(--ease) both}
+@keyframes drawer-in{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes backdrop-in{from{opacity:0}to{opacity:1}}
+.drawer-handle{display:none;width:46px;height:5px;margin:0 auto 10px;border-radius:999px;background:#D1D5DB}
+.drawer-header{position:sticky;top:-20px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px -2px 10px;padding:10px 2px 9px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.96);backdrop-filter:blur(16px)}
+.drawer-header strong{color:var(--ink);font-size:17px}
+.drawer-close{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px 12px;border:1px solid var(--primary-border);border-radius:12px;color:var(--primary-deep);background:#fff;cursor:pointer;font-weight:700}
+.drawer-close:hover{border-color:var(--primary);background:var(--primary-soft)}
+.hidden{display:none}
+@media (max-width:1100px){.topbar{position:static}.topbar-inner{grid-template-columns:1fr;gap:10px}.patient-context{grid-template-columns:repeat(5,minmax(0,1fr))}.container{margin-top:0}.tabs{top:8px}}
+@media (max-width:900px){.patient-context{grid-template-columns:repeat(3,minmax(0,1fr))}.context-action{grid-column:span 2}#dose .col-9{grid-column:span 8}#dose .col-3{grid-column:span 4}}
+@media (max-width:720px){.topbar-inner{min-height:0;padding:max(9px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 10px max(10px,env(safe-area-inset-left));gap:9px}.brand-mark{width:38px;height:38px;flex-basis:38px;border-radius:12px;font-size:20px}.brand-copy strong{font-size:15px}.brand-copy small{font-size:9px}.patient-context{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.context-action,.context-field,.context-metric,.context-switch{min-height:54px;padding:7px 9px;border-radius:12px}.context-action{grid-column:span 2}.container{margin:0 auto 86px;padding:10px max(10px,env(safe-area-inset-right)) 10px max(10px,env(safe-area-inset-left))}.tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin:0 0 12px;padding:4px;overflow:visible;border-radius:16px}.tab-btn{min-width:0;min-height:56px;padding:6px 3px;flex-direction:column;gap:3px;border-radius:12px;white-space:normal;font-size:11px;line-height:1.1}.tab-icon{font-size:18px}.tab-label-full{display:none}.tab-label-short{display:block}.card{padding:16px;border-radius:18px}.section-header{gap:10px;margin-bottom:15px;padding-bottom:13px}.section-header h2{font-size:21px}.section-header p{font-size:11px}.section-badge{padding:6px 8px;font-size:10px}.grid{grid-template-columns:repeat(6,1fr);gap:10px}.col-12,.col-4,.col-6,.col-8,.col-9{grid-column:span 6}.col-3{grid-column:span 3}#dose .col-3{grid-column:span 6}input,select{min-height:48px;font-size:16px}.topbar .context-field input{min-height:27px;font-size:16px}#dose .grid>.col-9,#dose .grid>.col-3,#dose .grid>.col-6{padding:11px;border-radius:14px}.summary{padding:15px 14px 15px 17px;border-radius:14px;font-size:14px}#doseOut{min-height:110px;padding:18px}.drug-essentials-grid{grid-template-columns:1fr}.fluid-optional{grid-column:span 6}.fluid-audit{grid-column:span 6}.fluid-optional-grid,.fluid-plan-grid{grid-template-columns:1fr}.pals-grid{grid-template-columns:1fr}.pals-panel-wide{grid-column:auto}.pals-header{flex-direction:column;gap:7px}.fluid-audit>summary{align-items:flex-start;flex-direction:column;gap:3px}.fluid-audit>summary small{text-align:left}.note{margin-top:11px}.fab{right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom))}.fab button{width:48px;min-width:48px;height:48px;padding:0;border-radius:14px;overflow:hidden;color:transparent;font-size:0}.fab button::before{content:"↻";display:grid;place-items:center;color:#fff;font-size:24px;line-height:1}.fab .secondary::before{content:"＋"}.drawer{left:0;right:0;bottom:0;max-height:88dvh;padding:14px max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));border-width:1px 0 0;border-radius:24px 24px 0 0}.drawer-handle{display:block}.drawer-header{top:-14px;margin:-2px 0 10px;padding-top:8px}.drawer-close span{display:none}}
+@media (max-width:420px){.col-3{grid-column:span 6}.context-switch strong{font-size:11px}.context-switch small{font-size:8px}.context-metric strong{font-size:15px}.tab-btn{min-height:53px;font-size:10px}.tab-icon{font-size:17px}.section-header{align-items:center}.section-header p{display:none}}
+
+/* Grovix landing shell */
+html{scroll-padding-top:82px}
+body{background:radial-gradient(900px 600px at -5% 45%,rgba(102,76,241,.11),transparent 62%),radial-gradient(760px 500px at 105% 66%,rgba(255,128,0,.06),transparent 64%),var(--bg)}
+.topbar{position:fixed;inset:0 0 auto;z-index:90;background:rgba(248,248,250,.9);box-shadow:none;backdrop-filter:blur(20px) saturate(1.4)}
+.topbar-inner{width:min(calc(100% - 36px),1160px);min-height:74px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 0 10px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+.brand-lockup{flex:0 0 auto}
+.brand-mark{width:40px;height:40px;flex-basis:40px;border-radius:12px;font-size:21px}
+.brand-copy strong{font-size:16px}.brand-copy small{font-size:9px}
+.site-nav{display:flex;align-items:center;justify-content:flex-end;gap:28px;margin-left:auto}
+.nav-link{position:relative;padding:10px 0;color:#4B5563;text-decoration:none;font-size:13px;font-weight:700;transition:color .18s ease}
+.nav-link::after{content:"";position:absolute;left:0;right:100%;bottom:5px;height:2px;border-radius:99px;background:var(--primary);transition:right .18s ease}
+.nav-link:hover{color:var(--primary-deep)}.nav-link:hover::after{right:0}
+.header-cta,.hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;font-weight:800;transition:transform .2s var(--ease),box-shadow .2s ease}
+.header-cta{min-height:42px;padding:10px 17px;border-radius:11px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 8px 18px rgba(102,76,241,.22);font-size:13px}
+.header-cta:hover,.hero-btn:hover{transform:translateY(-2px)}
+.hero-wrap{padding:98px 18px 0}
+.hero{position:relative;width:min(100%,1160px);min-height:560px;margin:0 auto;overflow:hidden;padding:82px 72px;border-radius:30px;color:#fff;background:radial-gradient(440px 320px at 88% 17%,rgba(255,255,255,.18),transparent 70%),radial-gradient(300px 240px at 65% 110%,rgba(255,128,0,.17),transparent 74%),linear-gradient(135deg,#7159F5 0%,#664CF1 42%,#5139D9 100%);box-shadow:0 28px 70px rgba(81,57,217,.25)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.13;background-image:linear-gradient(rgba(255,255,255,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.3) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(90deg,transparent,black)}
+.hero-copy{position:relative;z-index:3;width:min(58%,620px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:7px 12px;border:1px solid rgba(255,255,255,.22);border-radius:999px;color:rgba(255,255,255,.88);background:rgba(255,255,255,.1);font-size:11px;font-weight:800;letter-spacing:.12em}
+.eyebrow span{color:#FFD19A}.hero h1{max-width:630px;margin:0;font-size:clamp(42px,5.1vw,68px);line-height:1.08;letter-spacing:-.045em}
+.hero-copy>p{max-width:570px;margin:22px 0 0;color:rgba(255,255,255,.78);font-size:17px;line-height:1.75}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero-btn{min-height:50px;padding:13px 20px;border-radius:12px;font-size:14px}.hero-btn-primary{border:1px solid rgba(255,255,255,.28);color:#fff;background:linear-gradient(135deg,#765FFF,var(--primary-deep));box-shadow:0 10px 24px rgba(31,20,102,.28)}
+.hero-btn-secondary{border:1px solid rgba(255,255,255,.38);color:#fff;background:rgba(255,255,255,.1)}
+.hero-proof{display:flex;align-items:center;gap:12px;margin-top:33px}.proof-faces{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.13);font-size:18px;letter-spacing:-8px;padding-right:18px}
+.hero-proof>span:last-child{display:flex;flex-direction:column}.hero-proof strong{font-size:12px}.hero-proof small{margin-top:3px;color:rgba(255,255,255,.63);font-size:10px}
+.hero-stats{position:absolute;z-index:2;inset:0 0 0 59%;pointer-events:none}
+.float-card{position:absolute;width:230px;min-height:92px;padding:15px;display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:11px;border:1px solid rgba(255,255,255,.58);border-radius:17px;color:var(--ink);background:rgba(255,255,255,.94);box-shadow:0 18px 38px rgba(25,15,87,.2);backdrop-filter:blur(14px)}
+.float-card .float-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:13px;background:var(--primary-soft);font-size:21px}.float-card>span:nth-child(2){display:flex;min-width:0;flex-direction:column}.float-card small{color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.12em}.float-card strong{margin-top:4px;font-size:22px;line-height:1;white-space:nowrap}.float-card em{color:var(--accent);font-size:12px;font-style:normal}.float-card b{grid-column:2;margin-top:-7px;color:var(--good);font-size:9px}
+.stat-one{top:70px;left:15px;transform:rotate(-4deg)}.stat-two{top:190px;right:38px;transform:rotate(4deg)}.stat-three{bottom:126px;left:0;transform:rotate(3deg)}.stat-four{right:28px;bottom:36px;transform:rotate(-3deg)}
+.hero-orb{position:absolute;border:1px solid rgba(255,255,255,.18);border-radius:50%}.hero-orb-one{width:290px;height:290px;right:-90px;top:-100px}.hero-orb-two{width:150px;height:150px;left:48%;bottom:-100px}
+.trust-strip{width:min(calc(100% - 36px),1080px);margin:34px auto 0;text-align:center}.trust-strip p{margin:0;color:var(--muted-light);font-size:10px;font-weight:800;letter-spacing:.16em}
+.trust-pills{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:15px}.trust-pills span{padding:9px 14px;border:1px solid var(--border);border-radius:999px;color:#6B7280;background:rgba(255,255,255,.78);box-shadow:var(--shadow-soft);font-size:11px;font-weight:700}
+.features-section{width:min(calc(100% - 36px),1160px);margin:112px auto 0;scroll-margin-top:95px}.landing-heading,.product-heading{max-width:700px;margin:0 auto 40px;text-align:center}.landing-heading h2,.product-heading h2{margin:10px 0 12px;font-size:clamp(30px,4vw,46px);line-height:1.2}.landing-heading p,.product-heading p{margin:0;color:var(--muted);font-size:15px;line-height:1.75}
+.feature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.feature-card{position:relative;min-width:0;min-height:285px;padding:24px;overflow:hidden;border:1px solid var(--border);border-radius:19px;text-align:left;color:var(--ink);background:#fff;box-shadow:var(--shadow);cursor:pointer;transition:transform .22s var(--ease),box-shadow .22s ease,border-color .22s ease}.feature-card::after{content:"";position:absolute;right:-50px;bottom:-70px;width:160px;height:160px;border-radius:50%;background:var(--primary-soft);transition:transform .25s ease}.feature-card:hover{transform:translateY(-7px);border-color:var(--primary-border);box-shadow:0 18px 38px rgba(17,24,39,.12)}.feature-card:hover::after{transform:scale(1.25)}
+.feature-icon{width:52px;height:52px;display:grid;place-items:center;margin-bottom:30px;border-radius:15px;background:var(--primary-soft);font-size:23px}.feature-number{position:absolute;top:25px;right:24px;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.1em}.feature-card h3{font-size:20px}.feature-card p{position:relative;z-index:1;min-height:69px;margin:10px 0 18px;color:var(--muted);font-size:13px;line-height:1.72}.feature-link{position:relative;z-index:1;color:var(--primary);font-size:12px;font-weight:800}
+.product-section{margin-top:120px;padding:92px 0 120px;background:linear-gradient(180deg,rgba(102,76,241,.055),rgba(102,76,241,.015) 65%,transparent)}
+.container{width:min(calc(100% - 36px),1200px);margin:0 auto;padding:0;scroll-margin-top:94px}.product-shell{padding:18px;border:1px solid rgba(102,76,241,.1);border-radius:26px;background:rgba(255,255,255,.76);box-shadow:0 24px 65px rgba(17,24,39,.1);backdrop-filter:blur(16px)}
+.product-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:-2px -2px 14px;padding:8px 10px 17px;border-bottom:1px solid var(--border);color:var(--muted);font-size:10px}.product-toolbar>div{display:grid;grid-template-columns:auto auto;align-items:center;gap:1px 8px}.product-toolbar strong{color:var(--ink);font-size:12px}.product-toolbar small{grid-column:2}.status-dot{grid-row:1/3;width:9px;height:9px;border-radius:50%;background:#28B48D;box-shadow:0 0 0 4px rgba(40,180,141,.12)}
+.patient-context{margin-bottom:14px}.patient-context .context-field input{min-width:0;width:100%;min-height:28px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--primary-deep);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}.patient-context .context-field input:focus{border:0;box-shadow:none}
+.tabs{top:86px;margin-bottom:14px}.product-shell>.card{box-shadow:none}
+.site-footer{padding:46px 18px 52px;border-top:1px solid var(--border);text-align:center;background:#fff}.footer-brand{display:flex;align-items:center;justify-content:center;gap:10px}.footer-brand .brand-mark{width:36px;height:36px;flex-basis:36px;font-size:18px}.footer-brand strong{font-size:16px}.site-footer p{max-width:700px;margin:17px auto 12px;color:var(--muted);font-size:12px;line-height:1.7}.site-footer small{color:var(--muted-light);font-size:10px}
+@media (max-width:980px){.site-nav{gap:18px}.hero{padding:66px 46px}.hero-copy{width:58%}.hero-stats{left:57%}.float-card{width:205px}.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-card{min-height:250px}.patient-context{grid-template-columns:repeat(3,minmax(0,1fr))}.context-action{grid-column:span 2}}
+@media (max-width:800px){.nav-link{display:none}.hero{display:grid;gap:42px;min-height:0;padding:58px 38px}.hero-copy{width:100%}.hero-stats{position:relative;inset:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.float-card{position:relative;inset:auto;width:auto;min-height:86px;transform:none}.hero h1{font-size:clamp(40px,9vw,60px)}.hero-orb-two{display:none}.product-section{padding-top:74px}}
+@media (max-width:640px){html{scroll-padding-top:72px}.topbar-inner{width:calc(100% - 24px);min-height:64px;gap:12px}.brand-copy small{display:none}.site-nav{gap:0}.header-cta{min-height:38px;padding:9px 12px;font-size:11px}.hero-wrap{padding:78px 12px 0}.hero{padding:42px 22px;border-radius:22px}.hero h1{font-size:clamp(34px,10.6vw,46px)}.hero-copy>p{font-size:14px}.hero-actions{flex-direction:column}.hero-btn{width:100%}.hero-proof{align-items:flex-start}.proof-faces{display:none}.hero-stats{grid-template-columns:1fr}.float-card{min-height:78px}.trust-strip{width:calc(100% - 24px)}.features-section{width:calc(100% - 24px);margin-top:82px}.landing-heading,.product-heading{margin-bottom:28px}.feature-grid{grid-template-columns:1fr}.feature-card{min-height:235px}.product-section{margin-top:88px;padding:68px 0 84px}.container{width:calc(100% - 20px)}.product-shell{padding:10px;border-radius:20px}.product-toolbar{align-items:flex-start}.product-toolbar>span{display:none}.patient-context{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.context-action{grid-column:span 2}.tabs{top:70px}.site-footer{padding-bottom:80px}}
+@media (max-width:390px){.brand-mark{width:36px;height:36px;flex-basis:36px}.brand-copy strong{font-size:14px}.header-cta span{display:none}.hero{padding:38px 18px}.eyebrow{font-size:9px}.hero-copy>p{line-height:1.65}.float-card strong{font-size:19px}.product-heading{padding:0 14px}.context-switch{gap:5px}.context-switch .switch{flex-basis:36px;width:36px}.context-switch .switch:checked:before{transform:translateX(13px)}}
+@media (prefers-reduced-motion:reduce){*,::after,::before{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Pediatric Dose Calculator</h1>
-  <div class="banner">⚠ Reference aid only. All values are <b>UNVERIFIED</b> — confirm against Thai pediatric reference before clinical use. Suggests math only; never auto-administers.</div>
-
-  <div class="patient">
-    <div class="row">
-      <div class="field">
-        <label for="wt">Weight (kg) *</label>
-        <input id="wt" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 10" />
-      </div>
-      <div class="field">
-        <label for="age">Age (warnings)</label>
-        <input id="age" type="text" inputmode="numeric" placeholder="e.g. 2 yr" />
-      </div>
-    </div>
-  </div>
-
-  <div class="drugbtns" id="drugbtns"></div>
-  <div id="result"></div>
+<a class="skip-link" href="#app">ข้ามไปยังเครื่องคำนวณ</a>
+<header class="topbar">
+<div class="topbar-inner">
+<div class="brand-lockup" aria-label="er-ped-calc Pediatric Calculator">
+<span class="brand-mark" aria-hidden="true">👶🏻</span> <span class="brand-copy">
+<strong>er-ped-calc</strong> <small>Pediatric bedside toolkit</small>
+</span>
 </div>
-
-<script type="module">
-import { drugs } from "./drugs.js";
-import { computeDose, roundToHalf } from "./calc.js";
-
-const wtEl  = document.getElementById("wt");
-const btnWrap   = document.getElementById("drugbtns");
-const resultEl  = document.getElementById("result");
-
-let selectedDrug = null;
-let regimenIdx = 0;
-let concIdx = 0;
-
-drugs.forEach((d, i) => {
-  const b = document.createElement("button");
-  b.className = "drugbtn";
-  b.textContent = d.generic;
-  b.onclick = () => { selectedDrug = d; regimenIdx = 0; concIdx = 0; markActive(i); render(); };
-  btnWrap.appendChild(b);
-});
-function markActive(i) {
-  [...btnWrap.children].forEach((c, j) => c.classList.toggle("active", j === i));
-}
-
-const fmt = (n, dp = 0) => Number.isFinite(n) ? +n.toFixed(dp) + "" : "–";
-
-function render() {
-  if (!selectedDrug) { resultEl.innerHTML = '<p class="hint">Pick a drug above.</p>'; return; }
-  const d = selectedDrug;
-  const wt = parseFloat(wtEl.value);
-  const isAgeTable = d.calcMode === "ageTable";
-
-  let html = `<div class="card"><h2>${d.generic}${d.verified ? "" : '<span class="unverified">UNVERIFIED</span>'}</h2>`;
-
-  // regimen selector (weight-based only, when >1)
-  if (!isAgeTable) {
-    if (d.regimens.length > 1) {
-      html += `<label style="margin-top:8px">Indication</label><select id="regSel">` +
-        d.regimens.map((r, i) => `<option value="${i}" ${i === regimenIdx ? "selected" : ""}>${r.indication}</option>`).join("") +
-        `</select>`;
-    } else {
-      html += `<div class="sub">${d.regimens[0].indication}</div>`;
-    }
-  }
-
-  // concentration selector
-  if (d.concentrations.length > 1) {
-    html += `<label style="margin-top:8px">Concentration</label><select id="concSel">` +
-      d.concentrations.map((c, i) => `<option value="${i}" ${i === concIdx ? "selected" : ""}>${c.label}</option>`).join("") +
-      `</select>`;
-  } else if (d.concentrations.length === 1) {
-    html += `<div class="sub" style="margin-top:6px">${d.concentrations[0].label}</div>`;
-  }
-
-  const conc = d.concentrations[concIdx] ?? null;
-
-  if (isAgeTable) {
-    // age-based table (cetirizine etc)
-    const mgPerMl = conc ? conc.mgPer5ml / 5 : null;
-    html += `<table class="agetable">
-      <tr><th>Age</th><th>Dose</th><th>Volume</th></tr>
-      ${d.ageDoseTiers.map(t => {
-        const ml = mgPerMl ? roundToHalf(t.dose_mg / mgPerMl) : null;
-        return `<tr>
-          <td>${t.label}</td>
-          <td>${t.dose_mg} mg · OD</td>
-          <td class="ml">${ml != null ? ml + " mL" : "–"}</td>
-        </tr>`;
-      }).join("")}
-    </table>`;
-  } else if (!(wt > 0)) {
-    html += `<p class="hint" style="margin-top:12px">Enter weight to calculate.</p>`;
-  } else {
-    const regimen = d.regimens[regimenIdx];
-    const r = computeDose({ weightKg: wt, regimen, concentration: conc });
-    html += `
-      <div class="grid">
-        <div>
-          <div class="big">${fmt(r.mL_rounded, 1)} <span class="unit">mL</span></div>
-          <div class="sub">per dose · ${regimen.freqPerDay}×/day</div>
-          <div class="sub">raw ${fmt(r.mL_raw, 2)} mL</div>
-        </div>
-        <div>
-          <div class="big">${fmt(r.perDose_mg, 1)} <span class="unit">mg</span></div>
-          <div class="sub">per dose (${+regimen.mgPerKgPerDose.toFixed(2)} mg/kg)</div>
-          <div class="sub">${fmt(r.perDay_mg, 0)} mg/day</div>
-        </div>
-      </div>`;
-
-    if (r.perDoseCapped)
-      html += `<div class="flag cap">Per-dose capped → adult max ${regimen.maxPerDose} mg.</div>`;
-    if (r.dayCap_mg != null) {
-      const cls = r.perDayOverCap ? "over" : "warn";
-      const msg = r.perDayOverCap ? "OVER daily max ⚠" : "within daily max";
-      html += `<div class="flag ${cls}">Daily: ${fmt(r.perDay_mg, 0)} / ${fmt(r.dayCap_mg, 0)} mg — ${msg}.</div>`;
-    }
-  }
-
-  if (d.ageWarnings?.length)
-    html += `<div class="flag warn">${d.ageWarnings.join(" · ")}</div>`;
-
-  html += `<div class="src">Source: ${d.source}</div></div>`;
-  resultEl.innerHTML = html;
-
-  const rs = document.getElementById("regSel");
-  if (rs) rs.onchange = () => { regimenIdx = +rs.value; render(); };
-  const cs = document.getElementById("concSel");
-  if (cs) cs.onchange = () => { concIdx = +cs.value; render(); };
-}
-
-wtEl.addEventListener("input", render);
-render();
+<nav class="site-nav" aria-label="Primary navigation">
+<a class="nav-link" href="#app">Calculator</a>
+<a class="nav-link" href="#features">Features</a>
+<a class="nav-link" href="#app" onclick='showTab("pals",document.getElementById("tab-pals"))'>PALS</a>
+<a class="nav-link" href="#app" onclick='showTab("ncpr",document.getElementById("tab-ncpr"))'>NCPR</a>
+<a class="header-cta" href="#app">Get Started <span aria-hidden="true">→</span></a>
+</nav>
+</div>
+</header>
+<main>
+<section class="hero-wrap" aria-labelledby="hero-title">
+<div class="hero">
+<div class="hero-copy">
+<span class="eyebrow"><span aria-hidden="true">✦</span> PEDIATRIC BEDSIDE TOOLKIT</span>
+<h1 id="hero-title">คำนวณยาเด็กฉุกเฉิน<br>ในไม่กี่วินาที</h1>
+<p>รวม Pediatric Dose, IV Fluids, PALS และ NCPR ในเครื่องมือเดียว พร้อมใช้งานที่ข้างเตียง</p>
+<div class="hero-actions">
+<a class="hero-btn hero-btn-primary" href="#app">เปิดเครื่องคำนวณ <span aria-hidden="true">→</span></a>
+<a class="hero-btn hero-btn-secondary" href="#features">ดูฟีเจอร์</a>
+</div>
+<div class="hero-proof"><span class="proof-faces" aria-hidden="true">🧑🏻‍⚕️ 👩🏻‍⚕️ 👨🏻‍⚕️</span><span><strong>Fast, focused, bedside-ready</strong><small>คำนวณและตรวจสอบในที่เดียว</small></span></div>
+</div>
+<div class="hero-stats" aria-label="Product highlights">
+<div class="float-card stat-one"><span class="float-icon">💊</span><span><small>DRUG LIBRARY</small><strong>197 <em>ยา</em></strong></span><b>+ ready</b></div>
+<div class="float-card stat-two"><span class="float-icon">❤️</span><span><small>GUIDELINE</small><strong>PALS <em>2025</em></strong></span><b>Updated</b></div>
+<div class="float-card stat-three"><span class="float-icon">👶🏻</span><span><small>NEWBORN CARE</small><strong>NCPR</strong></span><b>AHA/AAP</b></div>
+<div class="float-card stat-four"><span class="float-icon">⚡</span><span><small>ANYWHERE</small><strong>Offline-ready</strong></span><b>Fast</b></div>
+</div>
+<span class="hero-orb hero-orb-one" aria-hidden="true"></span><span class="hero-orb hero-orb-two" aria-hidden="true"></span>
+</div>
+</section>
+<section class="trust-strip" aria-label="Trusted references">
+<p>BUILT AROUND TRUSTED CLINICAL REFERENCES</p>
+<div class="trust-pills pills"><span>AHA / AAP 2025</span><span>Holliday–Segar</span><span>Broselow</span><span>Thai bedside</span></div>
+</section>
+<section class="features-section" id="features" aria-labelledby="features-title">
+<div class="landing-heading"><span class="section-kicker">ONE TOOL, FOUR WORKFLOWS</span><h2 id="features-title">จากขนาดยาถึงการกู้ชีพ</h2><p>เลือกฟีเจอร์เพื่อเปิดใช้งานในเครื่องคำนวณได้ทันที</p></div>
+<div class="feature-grid">
+<button type="button" class="feature-card" onclick='showTab("dose",document.getElementById("tab-dose"));document.getElementById("app").scrollIntoView()'><span class="feature-icon">💊</span><span class="feature-number">01</span><h3>Pediatric Dose</h3><p>ค้นหายาและคำนวณขนาดตามน้ำหนัก พร้อมความเข้มข้นและปริมาตร</p><span class="feature-link">เปิดฟีเจอร์ ↗</span></button>
+<button type="button" class="feature-card" onclick='showTab("fluids",document.getElementById("tab-fluids"));document.getElementById("app").scrollIntoView()'><span class="feature-icon">💧</span><span class="feature-number">02</span><h3>IV Fluids</h3><p>คำนวณ maintenance, deficit และ ongoing losses พร้อม audit trail</p><span class="feature-link">เปิดฟีเจอร์ ↗</span></button>
+<button type="button" class="feature-card" onclick='showTab("pals",document.getElementById("tab-pals"));document.getElementById("app").scrollIntoView()'><span class="feature-icon">🧒🏻</span><span class="feature-number">03</span><h3>PALS</h3><p>สรุปลำดับการกู้ชีพและคำนวณยาฉุกเฉินตามน้ำหนัก</p><span class="feature-link">เปิดฟีเจอร์ ↗</span></button>
+<button type="button" class="feature-card" onclick='showTab("ncpr",document.getElementById("tab-ncpr"));document.getElementById("app").scrollIntoView()'><span class="feature-icon">👶🏻</span><span class="feature-number">04</span><h3>NCPR</h3><p>ช่วยกู้ชีพทารกแรกเกิด พร้อม SpO₂ targets และขนาดยา</p><span class="feature-link">เปิดฟีเจอร์ ↗</span></button>
+</div>
+</section>
+<section class="product-section" aria-labelledby="product-title">
+<div class="product-heading"><span class="section-kicker">THE PRODUCT</span><h2 id="product-title">เครื่องคำนวณสำหรับหน้างานจริง</h2><p>กรอกข้อมูลผู้ป่วยครั้งเดียว แล้วสลับใช้งานทุกโหมดได้ทันที</p></div>
+<div class="container" id="app">
+<div class="product-shell">
+<div class="product-toolbar"><div><span class="status-dot"></span><strong>Patient context</strong><small>Shared across every calculator</small></div><span>Securely processed on this device</span></div>
+<div class="patient-context" aria-label="ข้อมูลผู้ป่วยสำหรับการคำนวณ">
+<label class="context-field" for="weight">
+<span class="context-label">ABW</span> <span class="context-input">
+<input type="number" id="weight" min="0" step="0.1" inputmode="decimal" placeholder="0.0" oninput="onWeightChange()"> <span class="context-unit">kg</span>
+</span>
+</label> <label class="context-field" for="age" title="อายุต่ำกว่า 1 ปี ใช้สูตร (เดือน + 9) ÷ 2">
+<span class="context-label">AGE <small>ปี</small>
+</span> <span class="context-input">
+<input type="number" id="age" min="0" step="0.1" inputmode="decimal" placeholder="0.0" oninput="estimateFromAge()"> <span class="context-unit">yr</span>
+</span>
+</label> <label class="context-switch" for="useIBW">
+<input type="checkbox" id="useIBW" class="switch" onchange="applyIBWToBW()"> <span>
+<strong>Use IBW</strong>
+<small>แทนน้ำหนักจริง</small>
+</span>
+</label>
+<div class="context-metric" id="ibwChip" title="น้ำหนักประมาณที่ใช้ในการคำนวณ">
+<span class="context-label">IBW</span> <strong id="ibwVal">—</strong> <small id="ibwSource">
+</small>
+</div>
+<div class="context-action" id="broselowTrigger" role="button" tabindex="0" aria-controls="broselowPanel" aria-expanded="false" onclick="toggleBroselowPanel()" onkeydown='"Enter"!==event.key&&" "!==event.key||(event.preventDefault(),toggleBroselowPanel())' title="เปิด Broselow Quick Panel">
+<span class="context-label">BROSELOW</span> <span id="broselow" class="broselow">—</span> <span class="action-chevron" aria-hidden="true">⌄</span>
+</div>
+</div>
+<div class="tabs" role="tablist" aria-label="เครื่องคำนวณกุมารเวชศาสตร์" onkeydown="handleTabKeydown(event)">
+<button type="button" id="tab-dose" role="tab" aria-controls="dose" aria-selected="true" tabindex="0" class="tab-btn txt-bold active" data-tab="dose" onclick='showTab("dose",this)'>
+<span class="tab-icon" aria-hidden="true">💊</span>
+<span class="tab-label-full">Pediatric Dose</span>
+<span class="tab-label-short">Dose</span>
+</button> <button type="button" id="tab-fluids" role="tab" aria-controls="fluids" aria-selected="false" tabindex="-1" class="tab-btn" data-tab="fluids" onclick='showTab("fluids",this)'>
+<span class="tab-icon" aria-hidden="true">💧</span>
+<span class="tab-label-full">IV Fluids</span>
+<span class="tab-label-short">Fluids</span>
+</button> <button type="button" id="tab-pals" role="tab" aria-controls="pals" aria-selected="false" tabindex="-1" class="tab-btn" data-tab="pals" onclick='showTab("pals",this)'>
+<span class="tab-icon" aria-hidden="true">🧒🏻</span>
+<span class="tab-label-full">PALS</span>
+<span class="tab-label-short">PALS</span>
+</button> <button type="button" id="tab-ncpr" role="tab" aria-controls="ncpr" aria-selected="false" tabindex="-1" class="tab-btn" data-tab="ncpr" onclick='showTab("ncpr",this)'>
+<span class="tab-icon" aria-hidden="true">👶🏻</span>
+<span class="tab-label-full">NCPR</span>
+<span class="tab-label-short">NCPR</span>
+</button>
+</div>
+<section id="dose" class="card" role="tabpanel" aria-labelledby="tab-dose">
+<div class="section-header">
+<div>
+<span class="section-kicker">MEDICATION</span>
+<h2>Pediatric Dose</h2>
+<p>ค้นหาและคำนวณขนาดยาตามน้ำหนัก</p>
+</div>
+<span class="section-badge" id="doseCountBadge">รายการยา</span>
+</div>
+<div class="grid">
+<div class="col-9">
+<label for="doseDrug">
+<strong>Medication</strong>
+</label> <select id="doseDrug" onchange="calcDose()">
+</select>
+</div>
+<div class="col-3">
+<label class="muted" for="doseSearch">
+<strong>Search</strong>
+</label> <input id="doseSearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="ชื่อยา ชื่อการค้า หรือข้อความ" oninput="filterDoseList()">
+</div>
+<div class="col-6">
+<label for="doseW">
+<strong>BW</strong> (kg)</label> <input type="number" id="doseW" min="0" step="0.1" inputmode="decimal" placeholder="ใช้ค่าน้ำหนักด้านบนอัตโนมัติ" oninput="calcDose()">
+</div>
+<div class="col-6">
+<label for="doseConc">
+<strong>Form strength override</strong> <span class="label-help">เว้นว่างเพื่ออ่านจาก Form</span>
+</label> <input type="number" id="doseConc" min="0" step="0.01" inputmode="decimal" placeholder="เช่น 24 mg/mL หรือ mg/tab" oninput="calcDose()">
+</div>
+<div class="col-12">
+<div id="doseOut" class="summary" role="status" aria-live="polite" aria-atomic="true">
+</div>
+</div>
+</div>
+<div class="note">เครื่องมือนี้ช่วยคำนวณเบื้องต้น โปรดตรวจสอบขนาดยาและแนวทางรักษาก่อนสั่งทุกครั้ง</div>
+</section>
+<section id="fluids" class="card" role="tabpanel" aria-labelledby="tab-fluids" hidden style="display:none">
+<div class="section-header">
+<div>
+<span class="section-kicker">REHYDRATION</span>
+<h2>IV Fluids</h2>
+<p>Maintenance, deficit correction และ calculation audit trail</p>
+</div>
+<span class="section-badge section-badge-teal">24 h / 8+16 h</span>
+</div>
+<div class="grid">
+<div class="col-3">
+<label for="fW">
+<strong>Current BW</strong> (kg)</label> <input type="number" id="fW" min="0" step="0.1" inputmode="decimal" placeholder="ใช้ค่าน้ำหนักด้านบนอัตโนมัติ" oninput="calcFluids()">
+</div>
+<div class="col-3">
+<label for="fPreW">
+<strong>Pre-illness BW</strong> <span class="label-help">optional</span>
+</label> <input type="number" id="fPreW" min="0" step="0.1" inputmode="decimal" placeholder="ใช้คำนวณ weight loss" oninput="calcFluids()">
+</div>
+<div class="col-3">
+<label for="fGroup">
+<strong>Age group</strong>
+</label> <select id="fGroup" onchange="calcFluids()">
+<option value="older">Older child · 3 / 6 / 9%</option>
+<option value="infant">Infant · 5 / 10 / 15%</option>
+</select>
+</div>
+<div class="col-3">
+<label for="fAgeDays">
+<strong>Age</strong> (days) <span class="label-help">required for infant</span>
+</label> <input type="number" id="fAgeDays" min="0" step="1" inputmode="numeric" placeholder="เช่น 30" oninput="onFluidAgeDaysChange()">
+</div>
+<div class="col-6">
+<label for="fDegree">
+<strong>Dehydration class</strong>
+</label> <select id="fDegree" onchange="calcFluids()">
+<option value="mild">Mild</option>
+<option value="moderate">Moderate</option>
+<option value="severe">Severe / Shock</option>
+</select>
+<div class="label-help">Auto-adjust เมื่อกรอก Pre-illness BW</div>
+</div>
+<div class="col-6">
+<label for="fBolusPerKg">
+<strong>Initial bolus already given</strong> (mL/kg)</label> <input type="number" id="fBolusPerKg" min="0" step="1" inputmode="decimal" value="0" oninput="calcFluids()">
+<div class="fluid-quick-actions" aria-label="เลือก initial bolus ที่ให้ไปแล้ว">
+<span class="label-help">Quick set:</span> <button type="button" class="pill" onclick="setFluidBolusPerKg(0)">None</button> <button type="button" class="pill" onclick="setFluidBolusPerKg(10)">10 mL/kg</button> <button type="button" class="pill" onclick="setFluidBolusPerKg(20)">20 mL/kg</button>
+</div>
+</div>
+<div class="col-12">
+<div class="fluid-picker" aria-label="เลือกชนิดสารน้ำ">
+<span class="muted">
+<strong>ชนิดสารน้ำ</strong>
+</span> <button type="button" class="pill" onclick='setFluidType("ORS")' id="fluid-ORS">ORS</button> <button type="button" class="pill" onclick='setFluidType("NS")' id="fluid-NS">NS</button> <button type="button" class="pill" onclick='setFluidType("RL")' id="fluid-RL">RL</button> <button type="button" class="pill" onclick='setFluidType("D5-1/2NS")' id="fluid-D5-1/2NS">D5½NS</button> <button type="button" class="pill" onclick='setFluidType("D5-NS")' id="fluid-D5-NS">D5NS</button>
+</div>
+</div>
+<details class="fluid-optional">
+<summary>Ongoing losses (optional)</summary>
+<div class="fluid-optional-grid">
+<div>
+<label for="fMeasuredLoss">
+<strong>Measured losses</strong> (mL)</label> <input type="number" id="fMeasuredLoss" min="0" step="1" inputmode="decimal" placeholder="ใช้ค่านี้ถ้าวัดได้" oninput="calcFluids()">
+</div>
+<div>
+<label for="fLooseStools">
+<strong>Unmeasured loose stools</strong> (ครั้ง)</label> <input type="number" id="fLooseStools" min="0" step="1" inputmode="numeric" value="0" oninput="calcFluids()">
+</div>
+<div>
+<label for="fEmesis">
+<strong>Unmeasured emesis</strong> (ครั้ง)</label> <input type="number" id="fEmesis" min="0" step="1" inputmode="numeric" value="0" oninput="calcFluids()">
+</div>
+</div>
+</details>
+<div class="col-12">
+<div id="fOut" class="summary" role="status" aria-live="polite" aria-atomic="true">
+</div>
+</div>
+<details id="fAuditPanel" class="fluid-audit">
+<summary>
+<span>Calculation audit trail</span> <small id="fAuditStamp">ยังไม่มีผลคำนวณ</small>
+</summary>
+<div class="fluid-audit-body">
+<div class="fluid-audit-actions">
+<button type="button" id="fAuditCopy" class="fluid-audit-copy" onclick="copyFluidAudit()" disabled="disabled">คัดลอกสำหรับส่งเวร</button> <span id="fAuditCopyStatus" class="fluid-audit-status" role="status" aria-live="polite">
+</span>
+</div>
+<pre id="fAuditOut" class="fluid-audit-pre">กรอกข้อมูลให้ครบเพื่อสร้าง calculation audit trail</pre>
+</div>
+</details>
+</div>
+<div class="note">Holliday–Segar ใช้เป็นค่าประมาณสำหรับเด็กทั่วไป ไม่ใช้ในทารกอายุน้อยกว่า 14 วัน และต้องปรับตาม perfusion, urine output, ongoing losses, electrolytes และโรคร่วม</div>
+</section>
+<section id="pals" class="card" role="tabpanel" aria-labelledby="tab-pals" hidden style="display:none">
+<div class="pals-header">
+<div>
+<h2>Pediatric Advanced Life Support</h2>
+<p>สรุปลำดับช่วยชีวิตและคำนวณขนาดยาตามน้ำหนัก</p>
+</div>
+<span class="pals-version">AHA/AAP 2025</span>
+</div>
+<div class="grid">
+<div class="col-6">
+<label for="pW">
+<strong>BW</strong> (kg)</label> <input type="number" id="pW" min="0" step="0.1" inputmode="decimal" placeholder="ใช้ค่าน้ำหนักด้านบนอัตโนมัติ" oninput="calcPALS()">
+</div>
+<div class="col-6">
+<label for="pAge">
+<strong>Age</strong> (yr) <span class="label-help">optional สำหรับเกณฑ์ infant/child</span>
+</label> <input type="number" id="pAge" min="0" max="18" step="0.1" inputmode="decimal" placeholder="เช่น 0.5 หรือ 6" oninput="calcPALS()">
+</div>
+<div class="col-12">
+<div id="pOut" class="summary pals-summary" role="status" aria-live="polite" aria-atomic="true">
+</div>
+</div>
+</div>
+<div class="note">ใช้สำหรับผู้ป่วยเด็กหลังพ้นระยะแรกเกิดถึงอายุ 18 ปี การกู้ชีพทารกแรกเกิดในห้องคลอดให้ใช้ NCPR และต้องยืนยันขนาดยา/พลังงานกับอุปกรณ์และบริบทจริงก่อนใช้</div>
+</section>
+<section id="ncpr" class="card" role="tabpanel" aria-labelledby="tab-ncpr" hidden style="display:none">
+<div class="pals-header">
+<div>
+<h2>Neonatal Resuscitation</h2>
+<p>ลำดับช่วยกู้ชีพทารกแรกเกิดและคำนวณยาตามน้ำหนักแรกเกิด</p>
+</div>
+<span class="pals-version">AHA/AAP 2025</span>
+</div>
+<div class="grid">
+<div class="col-3">
+<label for="nW">
+<strong>BW</strong> (kg)</label> <input type="number" id="nW" min="0" step="0.01" inputmode="decimal" placeholder="น้ำหนักแรกเกิด" oninput="calcNCPR()">
+</div>
+<div class="col-3">
+<label for="nGA">
+<strong>Gestational Age</strong> (wk) <span class="label-help">optional</span>
+</label> <input type="number" id="nGA" min="20" max="44" step="1" inputmode="numeric" placeholder="20–44 สัปดาห์" oninput="calcNCPR()">
+</div>
+<div class="col-3">
+<label for="nHR">
+<strong>Current HR</strong> (/min) <span class="label-help">optional</span>
+</label> <input type="number" id="nHR" min="0" max="300" step="1" inputmode="numeric" placeholder="เช่น 55 หรือ 90" oninput="calcNCPR()">
+</div>
+<div class="col-3">
+<label for="nMinute">
+<strong>Minutes after birth</strong> <span class="label-help">SpO₂ target</span>
+</label> <select id="nMinute" onchange="calcNCPR()">
+<option value="">แสดงทุกช่วง</option>
+<option value="2">2 min</option>
+<option value="3">3 min</option>
+<option value="4">4 min</option>
+<option value="5">5 min</option>
+<option value="10">10 min</option>
+</select>
+</div>
+<div class="col-3">
+<label for="nBG">
+<strong>Blood Glucose</strong> (mg/dL) <span class="label-help">optional</span>
+</label> <input type="number" id="nBG" min="0" step="1" inputmode="numeric" placeholder="ค่าระดับน้ำตาล" oninput="calcNCPR()">
+</div>
+<div class="col-12">
+<div id="nOut" class="summary pals-summary" role="status" aria-live="polite" aria-atomic="true">
+</div>
+</div>
+</div>
+<div class="note">ใช้สำหรับการเปลี่ยนผ่านและการกู้ชีพทารกแรกเกิด ขนาดยาเป็นช่วงตาม guideline ต้องยืนยันความเข้มข้น เส้นทาง และลำดับ ventilation–compression ก่อนให้จริง</div>
+</section>
+</div>
+</div>
+</section>
+</main>
+<footer class="site-footer">
+<div class="footer-brand"><span class="brand-mark" aria-hidden="true">👶🏻</span><strong>er-ped-calc</strong></div>
+<p>เครื่องมือช่วยคำนวณเบื้องต้น โปรดตรวจสอบขนาดยา แนวทางรักษา และบริบททางคลินิกก่อนใช้ทุกครั้ง</p>
+<small>© 2026 er-ped-calc · Pediatric bedside toolkit</small>
+</footer>
+<div id="drawerBackdrop" class="drawer-backdrop hidden" aria-hidden="true" onclick="toggleBroselowPanel(!1)">
+</div>
+<div id="broselowPanel" class="drawer hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="broselowPanelTitle">
+<span class="drawer-handle" aria-hidden="true">
+</span>
+<div class="drawer-header">
+<strong id="broselowPanelTitle">📏 Broselow Quick Panel</strong> <button type="button" class="drawer-close" onclick="toggleBroselowPanel(!1)" aria-label="ปิด Broselow Quick Panel">✕ <span>Close</span>
+</button>
+</div>
+<div class="muted" style="margin-bottom:8px">Color-coded quick reference จาก ABW / IBW ปัจจุบัน ไม่ใช่การวัดความยาวด้วย Broselow tape</div>
+<div id="broselowContent" class="summary" style="border-style:solid;white-space:pre-wrap">
+</div>
+</div>
+<div class="fab">
+<button type="button" id="a2hsBtn" class="secondary" style="display:none" onclick="triggerA2HS()">➕ Add to Home</button> <button type="button" onclick="hardReload()" aria-label="Refresh application">🔄 Refresh</button>
+</div>
+<script src="app.js?v=ui-20260811u">
 </script>
 </body>
 </html>
